@@ -108,7 +108,7 @@ def post_invalid_title_comment(issue_number, repository):
         repository: The GitHub repository (owner/repo format)
     """
     comment_body = (
-        "## 🤖 AI Issue Quality Review\\n\\n"
+        "## 🤖 AI Issue Quality Review\n\n"
         "⚠️ **Validation Failed:** Issue title must follow the correct format: "
         "`<type>(<area>): <title contents>`, where type is `bug`, `chore`, or `feat`."
     )

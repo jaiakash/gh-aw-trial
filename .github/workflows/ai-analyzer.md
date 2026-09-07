@@ -6,21 +6,6 @@ on:
     types: [opened]
   roles: all
   status-comment: false
-  env:
-    REPO: ${{ github.repository }}
-    TITLE_PATTERN: '^(bug|chore|feat)\(([a-z]+)\):\s*(\S.*)$'
-  permissions:
-    issues: write
-  steps:
-    - name: Validate and classify issue title
-      id: validate_title
-      env:
-        GH_TOKEN: ${{ github.token }}
-        ISSUE_NUMBER: ${{ github.event.issue.number }}
-        ISSUE_TITLE: ${{ github.event.issue.title }}
-        TITLE_PATTERN: ${{ env.TITLE_PATTERN }}
-        REPO: ${{ env.REPO }}
-      run: python scripts/ai-analyzer.py
 
 permissions:
   issues: read
@@ -31,12 +16,24 @@ user-rate-limit:
   window: 60
 
 jobs:
-  pre-activation:
+  pre_activation:
     outputs:
       issue_type: ${{ steps.validate_title.outputs.issue_type }}
       issue_area: ${{ steps.validate_title.outputs.issue_area }}
       reference_standards: ${{ steps.validate_title.outputs.reference_standards }}
       valid_title: ${{ steps.validate_title.outputs.valid }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7.0.0
+      - name: Validate and classify issue title
+        id: validate_title
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          TITLE_PATTERN: '^(bug|chore|feat)\(([a-z]+)\):\s*(\S.*)$'
+          REPO: ${{ github.repository }}
+        run: python .github/scripts/issue_parser.py
 
 if: needs.pre_activation.outputs.valid_title == 'true'
 
@@ -47,6 +44,8 @@ engine:
 checkout: false
 
 tools:
+  bash: false
+  cli-proxy: false
   github:
     toolsets: [issues]
     min-integrity: none
