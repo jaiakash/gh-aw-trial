@@ -1675,7 +1675,7 @@ jobs:
             const { main } = require(path.join(actionsDir, 'check_rate_limit.cjs'));
             await main();
       - name: Checkout repository
-        uses: actions/checkout@v7.0.0
+        uses: actions/checkout@v7.0.1
       - name: Validate and classify issue title
         id: validate_title
         run: python .github/scripts/issue_parser.py
